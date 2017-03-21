@@ -1,6 +1,24 @@
 # Linux Server Configuration
 
-Live at [54.70.214.60][1]
+This is the fifth project for "Full Stack Web Developer Nanodegree" on Udacity. 
+
+In this project, a Linux virtual machine needs to be configurated to support the Item Catalog website.
+
+You can visit [54.70.214.60][1] for the website deployed.
+
+## Tasks
+1. Download RSA Key, restrict key access, and ssh into instance
+2. Install & upgrade packages, git
+3. Install & configure apache
+4. Clone & configure item-catalog
+5. Install python packages
+6. More apache config
+7. Install & config postgres & instantiate db
+8. NTP config
+9. Monitor & ban abuse
+10. Add User
+11. SSH
+12.  Firewall config
 
 ### Steps to setup item-catalog on a Ubuntu server
 #### 1. Download RSA Key, restrict key access, and ssh into instance:
@@ -135,8 +153,8 @@ Glances & Fail2ban: [1][13] & [2][14]
 Arch Linux: [1][15]
  - `vim /etc/ssh/sshd_config` (Enable password login)
  - On local machine: `ssh-keygen`
- - `scp ~/.ssh/id_rsa.pub grader@52.24.181.212:`
- - Back on root session: `su - grader`
+ - `scp ~/.ssh/id_rsa.pub root@54.70.214.60:`
+ - Back on root session: `su - `
  - `mkdir ~/.ssh`
  - `chmod 700 ~/.ssh`
  - `cat ~/id_rsa.pub >> ~/.ssh/authorized_keys`
