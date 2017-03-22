@@ -52,12 +52,10 @@ Udacity & Ubuntu: [1][5] & [2][6]
  - `mkdir app`
  - `cd app`
  - `git clone https://github.com/sinhaDroid/item-catalog.git`
+ - `mv item-catalog app`
  - `cd item-catalog`
  - `rm README.md`
  - `mv project.py __init__.py`
- - `mv * ..`
- - `cd ..`
- - `rm -rf item-catalog`
 
 #### 5. Install python packages
  - `apt-get install python-pip`
