@@ -13,12 +13,11 @@ You can visit [54.70.214.60][1] for the website deployed.
 4. Clone & configure item-catalog
 5. Install python packages
 6. More apache config
-7. Install & config postgres & instantiate db
-8. NTP config
-9. Monitor & ban abuse
-10. Add User
-11. SSH
-12.  Firewall config
+7. NTP config
+8. Monitor & ban abuse
+9. Add User
+10. SSH
+11. Firewall config
 
 ### Steps to setup item-catalog on a Ubuntu server
 #### 1. Download RSA Key, restrict key access, and ssh into instance:
@@ -33,8 +32,8 @@ Ubuntu Docs: [1][3] & [2][4]
  - `apt-get install unattended-upgrades`
  - `dpkg-reconfigure -plow unattended-upgrades`
  - `apt-get install git`
- - `git config --global user.name "Deepanshu Sinha"`
- - `git config --global user.email "107sinha@gmail.com"`
+ - `git config --global user.name "YOUR_NAME"`
+ - `git config --global user.email "YOUR_EMAIL_ADDRESS"`
 
 #### 3. Install & configure apache
 Udacity & Ubuntu: [1][5] & [2][6]
@@ -53,10 +52,8 @@ Udacity & Ubuntu: [1][5] & [2][6]
  - `cd app`
  - `git clone https://github.com/sinhaDroid/item-catalog.git`
  - `mv item-catalog app`
- - `cd item-catalog`
- - `rm README.md`
- - `mv project.py __init__.py`
-
+ - `cd app`
+ 
 #### 5. Install python packages
  - `apt-get install python-pip`
  - `pip install virtualenv`
@@ -107,29 +104,13 @@ touch app.wsgi | echo '#!/usr/bin/python
 ```
 - `service apache2 restart`
 
-#### 7. Install & config postgres & instantiate db
-Ubuntu Docs & Digital Ocean: [1][9] & [2][10]
- - `apt-get install postgresql postgresql-contrib`
- - `cd /etc/postgresql/9.3/main/`
- - `su - postgres`
- - `echo "CREATE USER catalog WITH PASSWORD 'catalogpw';" | psql`
- - `echo "ALTER USER catalog CREATEDB;" | psql`
- - `echo "CREATE DATABASE appdb WITH OWNER catalog;" | psql`
- - `echo "REVOKE ALL ON SCHEMA public FROM public;" | psql`
- - `echo "GRANT ALL ON SCHEMA public TO catalog;" | psql`
- - `exit`
- - `cd /var/www/app/app/`
- **Note: Refactored __init__.py, database_setup.py & createDB.py for postgres compatibility.**
- - `python database_setup.py`
- - `python createDB.py`
-
-#### 8. NTP config
+#### 7. NTP config
 Ubuntu Docs: [1][11] & [2][12]
  - `dpkg-reconfigure tzdata`
  - `apt-get install ntp`
  - `vim /etc/ntp.conf` (edited to proper ntp server pool)
 
-#### 9. Monitor & ban abuse
+#### 8. Monitor & ban abuse
 Glances & Fail2ban: [1][13] & [2][14]
  - `apt-get install python-pip build-essential python-dev`
  - `pip install Glances`
@@ -143,11 +124,11 @@ Glances & Fail2ban: [1][13] & [2][14]
  - `apt-get install sendmail iptables-persistent`
  - `service fail2ban restart`
 
-#### 10. Add User
+#### 9. Add User
  -  `adduser grader`
  -  `visudo` ( add "grader ALL=(ALL:ALL) ALL" under line "root ALL ..." )
  
-#### 11. SSH
+#### 10. SSH
 Arch Linux: [1][15]
  - `vim /etc/ssh/sshd_config` (Enable password login)
  - On local machine: `ssh-keygen`
@@ -162,7 +143,7 @@ Arch Linux: [1][15]
  - `vim /etc/ssh/sshd_config` (Change ssh to 2200, Enforce ssh key login, Don't permit root login)
  - `service ssh restart`
 
-#### 12. Firewall config
+#### 11. Firewall config
 Ufw Docs & Digital Ocean: [1][16] & [2][17]
  - `ufw enable`
  - `ufw allow 2200/tcp`
