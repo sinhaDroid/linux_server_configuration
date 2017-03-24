@@ -27,7 +27,7 @@ You can visit [54.70.214.60][1] for the website deployed.
 
 #### 2. Install & upgrade packages, git:
 Ubuntu Docs: [1][3] & [2][4]
- -  `apt-get update`
+ - `sudo apt-get update`
  - `sudo apt-get upgrade`
  - `apt-get install unattended-upgrades`
  - `dpkg-reconfigure -plow unattended-upgrades`
