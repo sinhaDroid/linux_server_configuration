@@ -4,10 +4,10 @@ This is the fifth project for "Full Stack Web Developer Nanodegree" on Udacity.
 
 In this project, a Linux virtual machine needs to be configurated to support the Item Catalog website.
 
-You can visit [54.70.214.60][1] for the website deployed.
+You can visit [http://35.154.191.184][1] for the website deployed.
 
 ## Tasks
-1. Download RSA Key, restrict key access, and ssh into instance
+1. Launch your Virtual Machine with your Udacity account
 2. Install & upgrade packages, git
 3. Install & configure apache
 4. Clone & configure item-catalog
@@ -19,11 +19,15 @@ You can visit [54.70.214.60][1] for the website deployed.
 10. SSH
 11. Firewall config
 
-### Steps to setup item-catalog on a Ubuntu server
-#### 1. Download RSA Key, restrict key access, and ssh into instance:
+### Steps to setup ItemCatalog on a Ubuntu server
+#### 1. Launch your Virtual Machine with your Udacity account:
+1. Download Private Key below
+2. Move the private key file into the folder `~/.ssh` (where ~ is your environment's home directory). So if you downloaded the file to the Downloads folder, just execute the following command in your terminal.
  -  `mv ~/Downloads/udacity_key.rsa ~/.ssh/`
+ 3. Open your terminal, type in
  -  `chmod 600 ~/.ssh/udacity_key.rsa`
- -  `ssh -i ~/.ssh/udacity_key.rsa root@54.70.214.60`
+ 4. In your terminal, type in
+ -  `ssh -i ~/.ssh/udacity_key.rsa ubuntu@35.154.191.184`
 
 #### 2. Install & upgrade packages, git:
 Ubuntu Docs: [1][3] & [2][4]
@@ -37,10 +41,12 @@ Ubuntu Docs: [1][3] & [2][4]
 
 #### 3. Install & configure apache
 Udacity & Ubuntu: [1][5] & [2][6]
+ 1. Install Apache and Allow in Firewall
  - `apt-get install apache2`
+ 2. Set Global ServerName
  - `apt-get install python-setuptools libapache2-mod-wsgi`
- - `echo "ServerName HOSTNAME" | sudo tee /etc/apache2/conf-available/fqdn.conf`
- - `a2enconf fqdn`
+ - `echo "ServerName HOSTNAME" | sudo tee /etc/apache2/conf-available/app.conf`
+ - `a2enconf app`
  - `apt-get install libapache2-mod-wsgi python-dev`
  - `a2enmod wsgi`
  - `service apache2 restart`
@@ -48,39 +54,36 @@ Udacity & Ubuntu: [1][5] & [2][6]
 #### 4. Clone & configure item-catalog
  - `cd /var/www/`
  - `touch .htaccess | echo "RedirectMatch 404 /\.git" >> .htaccess`
- - `mkdir app`
- - `cd app`
  - `git clone https://github.com/sinhaDroid/item-catalog.git`
- - `mv item-catalog app`
- - `cd app`
+ - `mv item-catalog ItemCatalog`
+ - `cd ItemCatalog`
  
 #### 5. Install python packages
- - `apt-get install python-pip`
- - `pip install virtualenv`
- - `virtualenv venv` 
- - `chmod -R 777 venv`
- - `pip install Flask-Seasurf`
- - `pip install requests`
- - `pip install --upgrade oauth2client`
- - `pip install sqlalchemy`
- - `apt-get install python-psycopg2`
- - `pip install bleach`
+ - `sudo apt-get install python-pip`
+ - `sudo apt-get install python-psycopg2`
+ - `sudo pip install virtualenv`
+ - `sudo virtualenv venv` 
+ - `sudo chmod -R 777 venv`
+ - `sudo pip install -r requirements.txt`
+ - `sudo pip install requests`
+ - `sudo pip install --upgrade oauth2client`
+ - `sudo pip install sqlalchemy`
 
 #### 6. More apache config
 Apache Docs & Digital Ocean: [1][7] & [2][8]
-
+1. Create app.conf to edit: 
+- `sudo nano /etc/apache2/sites-available/app.conf`
 ```
-touch /etc/apache2/sites-available/app.conf | echo 
-  "<VirtualHost *:80>
-	      ServerName 54.70.214.60
-	      ServerAdmin admin@54.70.214.60
-	      WSGIScriptAlias / /var/www/app/app.wsgi
-	      <Directory /var/www/app/app/>
+"<VirtualHost *:80>
+	      ServerName 35.154.191.184
+	      ServerAdmin ubuntu@35.154.191.184
+	      WSGIScriptAlias / /var/www/app.wsgi
+	      <Directory /var/www/ItemCatalog/>
 	          Order allow,deny
 	          Allow from all
 	      </Directory>
-	      Alias /static /var/www/app/app/static
-	      <Directory /var/www/app/app/static/>
+	      Alias /static /var/www/ItemCatalog/static
+	      <Directory /var/www/ItemCatalog/static/>
 	          Order allow,deny
 	          Allow from all
 	      </Directory>
@@ -88,20 +91,24 @@ touch /etc/apache2/sites-available/app.conf | echo
 	      LogLevel warn
       CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>" >> 
-/etc/apache2/sites-available/app.conf
 ```
- - `a2ensite app`
- - `cd ..` 
+2. Enable the virtual host with the following command:
+- `sudo a2ensite app`
+3. Create the .wsgi file under /var/www/:
+- `cd /var/www/`
+- `sudo nano app.wsgi`
+4. Add the following lines of code to the app.wsgi file:
  ```
-touch app.wsgi | echo '#!/usr/bin/python
+ #!/usr/bin/python
  import sys
  import logging
  logging.basicConfig(stream=sys.stderr)
- sys.path.insert(0,"/var/www/app/")
+ sys.path.insert(0,"/var/www/")
  
- from app import app as application
- application.secret_key = "Add your secret key"' >> app.wsgi
+ from ItemCatalog import app as application
+ application.secret_key = "Add your secret key"
 ```
+3. Restart Apache:
 - `service apache2 restart`
 
 #### 7. NTP config
@@ -132,7 +139,7 @@ Glances & Fail2ban: [1][13] & [2][14]
 Arch Linux: [1][15]
  - `vim /etc/ssh/sshd_config` (Enable password login)
  - On local machine: `ssh-keygen`
- - `scp ~/.ssh/id_rsa.pub root@54.70.214.60:`
+ - `scp ~/.ssh/id_rsa.pub root@35.154.191.184:`
  - Back on root session: `su - `
  - `mkdir ~/.ssh`
  - `chmod 700 ~/.ssh`
@@ -153,7 +160,7 @@ Ufw Docs & Digital Ocean: [1][16] & [2][17]
  - `exit` (Log out of root)
 
 
-[1]: http://54.70.214.60/
+[1]: http://35.154.191.184/
 [3]: https://wiki.ubuntu.com/Security/Upgrades
 [4]: https://help.ubuntu.com/lts/serverguide/automatic-updates.html
 [5]: http://blog.udacity.com/2015/03/step-by-step-guide-install-lamp-linux-apache-mysql-python-ubuntu.html
