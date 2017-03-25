@@ -13,11 +13,12 @@ You can visit [http://35.154.191.184][1] for the website deployed.
 4. Clone & configure item-catalog
 5. Install python packages
 6. More apache config
-7. NTP config
-8. Monitor & ban abuse
-9. Add User
-10. SSH
-11. Firewall config
+7. Install and configure PostgreSQL
+8. NTP config
+9. Monitor & ban abuse
+10. Add User
+11. SSH
+12. Firewall config
 
 ### Steps to setup ItemCatalog on a Ubuntu server
 #### 1. Launch your Virtual Machine with your Udacity account:
@@ -111,13 +112,52 @@ Apache Docs & Digital Ocean: [1][7] & [2][8]
 3. Restart Apache:
 - `service apache2 restart`
 
-#### 7. NTP config
+### 7 - Install and configure PostgreSQL
+
+1. Install PostgreSQL:  
+  `$ sudo apt-get install postgresql postgresql-contrib`
+2. Check that no remote connections are allowed (default):  
+  `$ sudo vim /etc/postgresql/9.3/main/pg_hba.conf`
+3. Open the database setup file:  
+  `$ sudo nano /var/www/ItemCatalog/db/config.py`
+4. Change the line starting with "engine" to (fill in a password): 
+  ```
+  sqlalchemy_database_uri = 'postgresql://postgres:PW_FOR_DB@localhost/catalog'
+  ```
+5. Create needed linux user for psql:  
+  `$ sudo adduser catalog` (choose a password)
+6. Change to default user postgres:  
+  `$ sudo su - postgres`
+7. Connect to the system:  
+  `$ psql`
+8. Add postgres user with password:  
+  Sources: [Trackets Blog][25] and [Super User][26]
+  1. Create user with LOGIN role and set a password:  
+    `# CREATE USER postgres WITH PASSWORD 'PW-FOR-DB';` (# stands for the command prompt in psql)
+  2. Allow the user to create database tables:  
+    `# ALTER USER postgres CREATEDB;`
+  3. *List current roles and their attributes:
+    `# \du`
+8. Create database:  
+  `# CREATE DATABASE catalog WITH OWNER postgres;`
+9. Connect to the database catalog
+  `# \c catalog` 
+10. Revoke all rights:  
+  `# REVOKE ALL ON SCHEMA public FROM public;`
+11. Grant only access to the catalog role:  
+  `# GRANT ALL ON SCHEMA public TO public;`
+12. Exit out of PostgreSQl and the postgres user:  
+  `# \q`, then `$ exit` 
+13. Create postgreSQL database schema:  
+  $ python database_setup.py
+
+#### 8. NTP config
 Ubuntu Docs: [1][11] & [2][12]
  - `dpkg-reconfigure tzdata`
  - `apt-get install ntp`
  - `vim /etc/ntp.conf` (edited to proper ntp server pool)
 
-#### 8. Monitor & ban abuse
+#### 9. Monitor & ban abuse
 Glances & Fail2ban: [1][13] & [2][14]
  - `apt-get install python-pip build-essential python-dev`
  - `pip install Glances`
@@ -131,11 +171,11 @@ Glances & Fail2ban: [1][13] & [2][14]
  - `apt-get install sendmail iptables-persistent`
  - `service fail2ban restart`
 
-#### 9. Add User
+#### 10. Add User
  -  `adduser grader`
  -  `visudo` ( add "grader ALL=(ALL:ALL) ALL" under line "root ALL ..." )
  
-#### 10. SSH
+#### 11. SSH
 Arch Linux: [1][15]
  - `vim /etc/ssh/sshd_config` (Enable password login)
  - On local machine: `ssh-keygen`
@@ -150,7 +190,7 @@ Arch Linux: [1][15]
  - `vim /etc/ssh/sshd_config` (Change ssh to 2200, Enforce ssh key login, Don't permit root login)
  - `service ssh restart`
 
-#### 11. Firewall config
+#### 12. Firewall config
 Ufw Docs & Digital Ocean: [1][16] & [2][17]
  - `ufw enable`
  - `ufw allow 2200/tcp`
